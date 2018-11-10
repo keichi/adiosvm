@@ -32,10 +32,18 @@
         ==========================================-->
 
     <io name="SimulationOutput">
-        <engine type="BPFile">
+        <engine type="InSituMPI">
         </engine>
     </io>
 
+    <!--===========================================
+           Configuration for the Analysis Input
+        ==========================================-->
+
+    <io name="AnalysisInput">
+        <engine type="SST">
+        </engine>
+    </io>
 
     <!--=========================================
            Configuration for the Analysis Output

@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
         adios2::ADIOS ad(settings.configfile, mpiReaderComm, adios2::DebugON);
 
         // Define IO method for engine creation
-        adios2::IO inIO = ad.DeclareIO("SimulationOutput");
+        adios2::IO inIO = ad.DeclareIO("AnalysisInput");
         adios2::IO outIO = ad.DeclareIO("AnalysisOutput");
         if (!rank)
         {
