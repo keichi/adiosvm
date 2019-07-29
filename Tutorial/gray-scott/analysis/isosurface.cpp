@@ -137,9 +137,9 @@ void write_adios(adios2::Engine &writer,
     MPI_Allreduce(&numCells, &totalCells, 1, MPI_INT, MPI_SUM, comm);
     MPI_Scan(&numCells, &offsetCells, 1, MPI_INT, MPI_SUM, comm);
 
-    for (int i = 0; i < cells.size(); i++) {
-        cells[i] += (offsetPoints - numPoints);
-    }
+    // for (int i = 0; i < cells.size(); i++) {
+        // cells[i] += (offsetPoints - numPoints);
+    // }
 
     varCell.SetShape({static_cast<size_t>(totalCells),
                       static_cast<size_t>(totalCells > 0 ? 3 : 0)});

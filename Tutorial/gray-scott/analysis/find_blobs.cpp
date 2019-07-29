@@ -133,13 +133,13 @@ int main(int argc, char *argv[])
         MPI_Abort(MPI_COMM_WORLD, -1);
     }
 
-    if (procs != 1) {
-        if (rank == 0) {
-            std::cerr << "find_blobs only supports serial execution"
-                      << std::endl;
-        }
-        MPI_Abort(MPI_COMM_WORLD, -1);
-    }
+    // if (procs != 1) {
+    //     if (rank == 0) {
+    //         std::cerr << "find_blobs only supports serial execution"
+    //                   << std::endl;
+    //     }
+    //     MPI_Abort(MPI_COMM_WORLD, -1);
+    // }
 
     const std::string input_fname(argv[1]);
 
@@ -184,12 +184,16 @@ int main(int argc, char *argv[])
         auto varStep = inIO.InquireVariable<int>("step");
 
         if (varPoint.Shape().size() > 0 || varCell.Shape().size() > 0) {
-            varPoint.SetSelection(
-                {{0, 0}, {varPoint.Shape()[0], varPoint.Shape()[1]}});
-            varCell.SetSelection(
-                {{0, 0}, {varCell.Shape()[0], varCell.Shape()[1]}});
-            varNormal.SetSelection(
-                {{0, 0}, {varNormal.Shape()[0], varNormal.Shape()[1]}});
+            varPoint.SetBlockSelection(rank);
+            varCell.SetBlockSelection(rank);
+            varNormal.SetBlockSelection(rank);
+
+            // varPoint.SetSelection(
+                // {{0, 0}, {varPoint.Shape()[0], varPoint.Shape()[1]}});
+            // varCell.SetSelection(
+                // {{0, 0}, {varCell.Shape()[0], varCell.Shape()[1]}});
+            // varNormal.SetSelection(
+                // {{0, 0}, {varNormal.Shape()[0], varNormal.Shape()[1]}});
 
             reader.Get<double>(varPoint, points);
             reader.Get<int>(varCell, cells);
@@ -206,7 +210,9 @@ int main(int argc, char *argv[])
         timer_compute.start();
 #endif
 
-        std::cout << "find_blobs at step " << step << std::endl;
+        if (!rank) {
+            std::cout << "find_blobs at step " << step << std::endl;
+        }
 
         auto polyData = read_mesh(points, cells, normals);
         // find_blobs(polyData);
