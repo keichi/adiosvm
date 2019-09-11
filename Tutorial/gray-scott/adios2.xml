@@ -29,18 +29,6 @@
             <!-- BP4/SST engine parameters -->
             <parameter key="OpenTimeoutSecs" value="10.0"/>
         </engine>
-
-        <!-- Compress variables -->
-        <variable name="U">
-            <operation type="sz">
-                <parameter key="accuracy" value="0.001"/>
-            </operation>
-        </variable>
-        <variable name="V">
-            <operation type="sz">
-                <parameter key="accuracy" value="0.001"/>
-            </operation>
-        </variable>
     </io>
 
     <!--====================================
