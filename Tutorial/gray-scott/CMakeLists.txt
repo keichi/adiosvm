@@ -11,6 +11,10 @@ project(gray-scott C CXX)
 find_package(MPI REQUIRED)
 find_package(ADIOS2 REQUIRED)
 
+add_subdirectory(common/json)
+add_subdirectory(common/libzmq)
+add_subdirectory(common/cppzmq)
+
 option(USE_TIMERS "Use profiling timers")
 if(USE_TIMERS)
   message(STATUS "Enabling profiling timers")
@@ -26,7 +30,8 @@ add_executable(gray-scott
   simulation/settings.cpp
   simulation/writer.cpp
 )
-target_link_libraries(gray-scott adios2::adios2 MPI::MPI_C)
+target_link_libraries(gray-scott adios2::adios2 MPI::MPI_C
+                      nlohmann_json::nlohmann_json)
 
 add_executable(pdf_calc analysis/pdf_calc.cpp)
 target_link_libraries(pdf_calc adios2::adios2 MPI::MPI_C)
