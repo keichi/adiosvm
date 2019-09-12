@@ -89,3 +89,8 @@ if (VTK)
       MPI::MPI_C)
   endif(VTK_FOUND)
 endif(VTK)
+
+add_executable(controller
+  controller/main.cpp
+)
+target_link_libraries(controller libzmq cppzmq nlohmann_json::nlohmann_json)
