@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include <iostream>
 
 #include <nlohmann/json.hpp>
@@ -5,22 +6,34 @@
 
 class Telemetry
 {
+protected:
+    std::string _app_name;
     zmq::context_t _ctx;
-    zmq::socket_t _sock(ctx, zma::socket_type::rep);
+    zmq::socket_t _sock;
 
-    Telemetry()
+public:
+    Telemetry(const std::string &app_name)
+        : _sock(_ctx, zmq::socket_type::req), _app_name(app_name)
     {
-        _sock.connect("tcp://*:5555");
+        const char *addr = std::getenv("CONTROLLER_ADDR");
+
+        _sock.connect(addr);
     }
 
-    ~Telemetry()
+    void send(const std::string &type, int step, double time)
     {
-        _sock.destroy();
-        _ctx.destroy();
-    }
+        nlohmann::json j;
+        j["app"] = _app_name;
+        j["type"] = type;
+        j["time"] = time;
+        j["step"] = step;
 
-    void send(const std::string &name, double time)
-    {
-        zmq::message_t req;
+        const std::string s(j.dump());
+
+        zmq::message_t req(s.begin(), s.end());
+        _sock.send(req);
+
+        zmq::message_t resp;
+        _sock.recv(resp);
     }
 };

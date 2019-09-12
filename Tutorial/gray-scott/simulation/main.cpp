@@ -6,6 +6,7 @@
 #include <adios2.h>
 #include <mpi.h>
 
+#include "../common/telemetry.hpp"
 #include "../common/timer.hpp"
 #include "gray-scott.h"
 #include "writer.h"
@@ -85,6 +86,8 @@ int main(int argc, char **argv)
     }
 
 #ifdef ENABLE_TIMERS
+    Telemetry telemetry("gray-scott");
+
     Timer timer_total;
     Timer timer_compute;
     Timer timer_write;
@@ -110,6 +113,11 @@ int main(int argc, char **argv)
 
 #ifdef ENABLE_TIMERS
         double time_compute = timer_compute.stop();
+
+        if (rank == 0) {
+            telemetry.send("gs_compute", i, time_compute);
+        }
+
         MPI_Barrier(comm);
         timer_write.start();
 #endif
@@ -132,6 +140,12 @@ int main(int argc, char **argv)
 #ifdef ENABLE_TIMERS
         double time_write = timer_write.stop();
         double time_step = timer_total.stop();
+
+        if (rank == 0) {
+            telemetry.send("gs_write", i, time_write);
+            telemetry.send("gs_total", i, time_step);
+        }
+
         MPI_Barrier(comm);
 
         log << i << "\t" << time_step << "\t" << time_compute << "\t"

@@ -31,7 +31,7 @@ add_executable(gray-scott
   simulation/writer.cpp
 )
 target_link_libraries(gray-scott adios2::adios2 MPI::MPI_C
-                      nlohmann_json::nlohmann_json)
+                      libzmq cppzmq nlohmann_json::nlohmann_json)
 
 add_executable(pdf_calc analysis/pdf_calc.cpp)
 target_link_libraries(pdf_calc adios2::adios2 MPI::MPI_C)

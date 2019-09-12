@@ -22,9 +22,6 @@ int main(int argc, char **argv)
         auto j = nlohmann::json::parse(msg);
         std::cout << j << std::endl;
 
-        std::cout << "Received message:" << std::endl;
-        std::cout << msg << std::endl;
-
         const std::string s("ack");
         zmq::message_t reply(s.begin(), s.end());
 
