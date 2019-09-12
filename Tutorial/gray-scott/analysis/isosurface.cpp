@@ -21,6 +21,7 @@
 #include <vtkSmartPointer.h>
 #include <vtkXMLPolyDataWriter.h>
 
+#include "../common/telemetry.hpp"
 #include "../common/timer.hpp"
 
 vtkSmartPointer<vtkPolyData>
@@ -229,6 +230,8 @@ int main(int argc, char *argv[])
     int step;
 
 #ifdef ENABLE_TIMERS
+    Telemetry telemetry("isosurface");
+
     Timer timer_total;
     Timer timer_read;
     Timer timer_compute;
@@ -288,6 +291,11 @@ int main(int argc, char *argv[])
 
 #ifdef ENABLE_TIMERS
         double time_read = timer_read.stop();
+
+        if (rank == 0) {
+            telemetry.send("iso_read", step, time_read);
+        }
+
         MPI_Barrier(comm);
         timer_compute.start();
 #endif
@@ -303,6 +311,11 @@ int main(int argc, char *argv[])
 
 #ifdef ENABLE_TIMERS
         double time_compute = timer_compute.stop();
+
+        if (rank == 0) {
+            telemetry.send("iso_compute", step, time_compute);
+        }
+
         MPI_Barrier(comm);
         timer_write.start();
 #endif
@@ -313,6 +326,12 @@ int main(int argc, char *argv[])
 #ifdef ENABLE_TIMERS
         double time_write = timer_write.stop();
         double time_step = timer_total.stop();
+
+        if (rank == 0) {
+            telemetry.send("iso_write", step, time_write);
+            telemetry.send("iso_total", step, time_step);
+        }
+
         MPI_Barrier(comm);
 
         log << step << "\t" << time_step << "\t" << time_read << "\t"

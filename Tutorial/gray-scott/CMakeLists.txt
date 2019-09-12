@@ -53,7 +53,7 @@ if (VTK)
   if(VTK_FOUND)
     add_executable(isosurface analysis/isosurface.cpp)
     target_link_libraries(isosurface adios2::adios2 ${VTK_LIBRARIES}
-      MPI::MPI_C)
+      libzmq cppzmq nlohmann_json::nlohmann_json MPI::MPI_C)
   endif(VTK_FOUND)
 
   find_package(VTK COMPONENTS
