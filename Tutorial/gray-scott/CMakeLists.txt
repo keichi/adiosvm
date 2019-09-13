@@ -13,8 +13,8 @@ find_package(ADIOS2 REQUIRED)
 
 add_subdirectory(common/json)
 
-find_package(ZeroMQ)
-find_package(cppzmq)
+find_package(ZeroMQ REQUIRED)
+find_package(cppzmq REQUIRED)
 
 option(USE_TIMERS "Use profiling timers")
 if(USE_TIMERS)
