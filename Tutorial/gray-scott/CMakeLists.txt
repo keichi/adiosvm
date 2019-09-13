@@ -11,12 +11,10 @@ project(gray-scott C CXX)
 find_package(MPI REQUIRED)
 find_package(ADIOS2 REQUIRED)
 
-set(JSON_BuildTests OFF CACHE INTERNAL "")
-set(BUILD_TESTS OFF CACHE INTERNAL "")
-
 add_subdirectory(common/json)
-add_subdirectory(common/libzmq)
-add_subdirectory(common/cppzmq)
+
+find_package(ZeroMQ)
+find_package(cppzmq)
 
 option(USE_TIMERS "Use profiling timers")
 if(USE_TIMERS)
@@ -96,4 +94,5 @@ endif(VTK)
 add_executable(controller
   controller/main.cpp
 )
-target_link_libraries(controller libzmq cppzmq nlohmann_json::nlohmann_json)
+target_link_libraries(controller MPI::MPI_C libzmq cppzmq
+                      nlohmann_json::nlohmann_json)
