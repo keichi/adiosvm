@@ -6,7 +6,10 @@
 #include <adios2.h>
 #include <mpi.h>
 
+#ifdef ENABLE_TIMERS
 #include "../common/timer.hpp"
+#include "../common/yuzu_client.hpp"
+#endif
 #include "gray-scott.h"
 #include "writer.h"
 
@@ -85,6 +88,8 @@ int main(int argc, char **argv)
     }
 
 #ifdef ENABLE_TIMERS
+    YuzuClient client;
+
     Timer timer_total;
     Timer timer_compute;
     Timer timer_write;
@@ -133,6 +138,10 @@ int main(int argc, char **argv)
         double time_write = timer_write.stop();
         double time_step = timer_total.stop();
         MPI_Barrier(comm);
+
+        client.send(i, time_write, TimerType::WRITE_IO);
+        client.send(i, time_compute, TimerType::COMPUTE);
+        client.send(i, time_step, TimerType::TOTAL);
 
         log << i << "\t" << time_step << "\t" << time_compute << "\t"
             << time_write << std::endl;

@@ -1,5 +1,14 @@
 cmake_minimum_required(VERSION 3.10)
 
+include(FetchContent)
+FetchContent_Declare(
+  gRPC
+  GIT_REPOSITORY https://github.com/grpc/grpc
+  GIT_TAG        v1.28.1
+)
+set(FETCHCONTENT_QUIET OFF)
+FetchContent_MakeAvailable(gRPC)
+
 set(CMAKE_CXX_STANDARD 11)
 # ENABLE ADIOS2_ROOT
 if(POLICY CMP0074)
@@ -25,11 +34,13 @@ add_executable(gray-scott
   simulation/gray-scott.cpp
   simulation/settings.cpp
   simulation/writer.cpp
+  common/collector.pb.cc
+  common/collector.grpc.pb.cc
 )
-target_link_libraries(gray-scott adios2::adios2 MPI::MPI_C)
+target_link_libraries(gray-scott adios2::adios2 MPI::MPI_C grpc++)
 
 add_executable(pdf_calc analysis/pdf_calc.cpp)
-target_link_libraries(pdf_calc adios2::adios2 MPI::MPI_C)
+target_link_libraries(pdf_calc adios2::adios2 MPI::MPI_C grpc++)
 
 option(VTK "Build VTK apps")
 if (VTK_ROOT)
