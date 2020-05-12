@@ -20,7 +20,10 @@
 #include <vtkSmartPointer.h>
 #include <vtkUnstructuredGrid.h>
 
+#ifdef ENABLE_TIMERS
 #include "../common/timer.hpp"
+#include "../common/yuzu_client.hpp"
+#endif
 
 vtkSmartPointer<vtkPolyData> read_mesh(const std::vector<double> &bufPoints,
                                        const std::vector<int> &bufCells,
@@ -113,6 +116,8 @@ int main(int argc, char *argv[])
     int step;
 
 #ifdef ENABLE_TIMERS
+    YuzuClient client;
+
     Timer timer_total;
     Timer timer_read;
     Timer timer_compute;
@@ -177,6 +182,10 @@ int main(int argc, char *argv[])
         double time_compute = timer_compute.stop();
         double time_step = timer_total.stop();
         MPI_Barrier(comm);
+
+        client.send(step, time_read, TimerType::READ_IO);
+        client.send(step, time_compute, TimerType::COMPUTE);
+        client.send(step, time_step, TimerType::TOTAL);
 
         log << step << "\t" << time_step << "\t" << time_read << "\t"
             << time_compute << std::endl;

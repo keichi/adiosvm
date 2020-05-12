@@ -21,7 +21,10 @@
 #include <vtkSmartPointer.h>
 #include <vtkXMLPolyDataWriter.h>
 
+#ifdef ENABLE_TIMERS
 #include "../common/timer.hpp"
+#include "../common/yuzu_client.hpp"
+#endif
 
 vtkSmartPointer<vtkPolyData>
 compute_isosurface(const adios2::Variable<double> &varField,
@@ -229,6 +232,8 @@ int main(int argc, char *argv[])
     int step;
 
 #ifdef ENABLE_TIMERS
+    YuzuClient client;
+
     Timer timer_total;
     Timer timer_read;
     Timer timer_compute;
@@ -314,6 +319,11 @@ int main(int argc, char *argv[])
         double time_write = timer_write.stop();
         double time_step = timer_total.stop();
         MPI_Barrier(comm);
+
+        client.send(step, time_read, TimerType::READ_IO);
+        client.send(step, time_compute, TimerType::COMPUTE);
+        client.send(step, time_write, TimerType::WRITE_IO);
+        client.send(step, time_step, TimerType::TOTAL);
 
         log << step << "\t" << time_step << "\t" << time_read << "\t"
             << time_compute << "\t" << time_write << std::endl;

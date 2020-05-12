@@ -57,9 +57,13 @@ if (VTK)
   )
 
   if(VTK_FOUND)
-    add_executable(isosurface analysis/isosurface.cpp)
+    add_executable(isosurface
+      analysis/isosurface.cpp
+      common/collector.pb.cc
+      common/collector.grpc.pb.cc
+    )
     target_link_libraries(isosurface adios2::adios2 ${VTK_LIBRARIES}
-      MPI::MPI_C)
+      MPI::MPI_C grpc++)
   endif(VTK_FOUND)
 
   find_package(VTK COMPONENTS
@@ -68,9 +72,13 @@ if (VTK)
   )
 
   if(VTK_FOUND)
-    add_executable(find_blobs analysis/find_blobs.cpp)
+    add_executable(find_blobs
+      analysis/find_blobs.cpp
+      common/collector.pb.cc
+      common/collector.grpc.pb.cc
+    )
     target_link_libraries(find_blobs adios2::adios2 ${VTK_LIBRARIES}
-      MPI::MPI_C)
+      MPI::MPI_C grpc++)
   endif(VTK_FOUND)
 
   find_package(VTK COMPONENTS
@@ -78,9 +86,13 @@ if (VTK)
   )
 
   if(VTK_FOUND)
-    add_executable(compute_curvature analysis/curvature.cpp)
+    add_executable(compute_curvature
+      analysis/curvature.cpp
+      common/collector.pb.cc
+      common/collector.grpc.pb.cc
+    )
     target_link_libraries(compute_curvature adios2::adios2 ${VTK_LIBRARIES}
-      MPI::MPI_C)
+      MPI::MPI_C grpc++)
   endif(VTK_FOUND)
 
 
